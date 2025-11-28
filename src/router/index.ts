@@ -8,7 +8,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: () => import("@/views/Home/index.vue"),
     meta: { 
       hidden: true,
-      title: 'yft-home'
+      title: '首页'
     },
   },
   {
@@ -16,24 +16,8 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: "template-editor",
     component: () => import("@/views/Editor/index.vue"),
     meta: { 
-      title: 'yft-design'
+      title: '模板编辑器'
     },
-  },
-  {
-    path: "/github",
-    component: () => import('@/views/OAuth/github.vue'),
-    meta: { 
-      title: 'yft-github'
-    },
-    // children: [
-    //   {
-    //     path: "/oauth/callback/github",
-    //     component: () => import('@/views/OAuth/github.vue'),
-    //     meta: {
-    //       "keepAlive": true
-    //     }
-    //   },
-    // ]
   },
   {
     path: "/401",
