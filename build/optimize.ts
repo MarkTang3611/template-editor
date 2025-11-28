@@ -82,6 +82,6 @@ const include = [
   'element-plus/es/components/text/style/css'
 ]
 
-const exclude = []
+const exclude : string[]= []
 
 export { include, exclude }
