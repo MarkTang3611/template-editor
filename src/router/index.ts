@@ -12,8 +12,8 @@ export const constantRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/",
-    name: "/",
+    path: "/template-editor",
+    name: "template-editor",
     component: () => import("@/views/Editor/index.vue"),
     meta: { 
       title: 'yft-design'
