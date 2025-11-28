@@ -8,7 +8,7 @@ import { createVitePlugins } from './build/plugins';
 
 export default ({ command, mode }: ConfigEnv): UserConfigExport => {
   return {
-    base: "./", // publicPath
+    base: "/template-editor/", // publicPath
     server: {
       host: '0.0.0.0',
       port: 5174,
