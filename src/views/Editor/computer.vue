@@ -14,12 +14,12 @@
         <CanvasHeader class="center-header relative flex justify-between py-[10px] text-[14px] select-none h-[39px]" />
         <CanvasCenter class="center-body" />
         <CanvasAffix  class="center-affix"/>
-        <CanvasICP />
+        <!-- <CanvasICP /> -->
       </div>
       <CanvasRight class="layout-content-right h-full w-[260px] bg-[#fff] flex flex-col" />
       <CanvasDom class="absolute -z-[200] -left-[300px]" />
     </div>
-    <CanvasTour />
+    <!-- <CanvasTour /> -->
   </div>
 </template>
 
