@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
-    // "suppressImplicitAnyIndexErrors": true, //
+    "noImplicitAny": false, // 仅关闭隐式any检查
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
@@ -39,5 +39,9 @@
   "exclude": [
     "node_modules"
   ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

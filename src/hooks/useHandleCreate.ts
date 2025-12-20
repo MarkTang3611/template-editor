@@ -62,7 +62,6 @@ export default () => {
     }
     const { centerPoint } = useCenter();
     const { canvasX, canvasY } = computedPointByDrag();
-    debugger;
     const textBoxElement = new Textbox(textValue, {
       id: nanoid(10),
       left: canvasX || centerPoint.x,

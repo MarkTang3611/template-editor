@@ -19,6 +19,8 @@ import { useTemplatesStore } from '@/store';
 import useCommon from './useCommon';
 import { SnapshotType, Snapshot } from '@/types/history';
 import useHistorySnapshot from '@/hooks/useHistorySnapshot';
+import useHandleTemplate from '@/hooks/useHandleTemplate';
+import { useRoute } from 'vue-router';
 
 let canvas: null | FabricCanvas = null;
 
@@ -141,13 +143,26 @@ const initEvent = () => {
 };
 
 // 初始化模板
-const initTemplate = async (templateId?: number) => {
+const initTemplate = async () => {
   if (!canvas) return;
   const { initCommon } = useCommon();
-  const templatesStore = useTemplatesStore();
-  const { currentTemplate } = storeToRefs(templatesStore);
-  if (templateId && Number(templateId) > 0) return;
-  await canvas.loadFromJSON(currentTemplate.value);
+  const { createTemplate } = useHandleTemplate();
+  const route = useRoute();
+  const { query } = route;
+  // console.log('query', query);
+  let w = 800;
+  let h = 400;
+  let templateName = '新建模板';
+  try {
+    w = query.w ? mm2px(Number(query.w)) : 800;
+    h = query.h ? mm2px(Number(query.h)) : 400;
+    templateName = query.name ? query.name : templateName;
+  } catch (error) {
+    console.log(error);
+  }
+  await createTemplate(w, h, {
+    templateName: templateName
+  });
   setCanvasTransform();
   initCommon();
   initEvent();

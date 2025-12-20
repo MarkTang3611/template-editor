@@ -1,9 +1,9 @@
-import { FabricObject, Control as FabricControl } from "fabric"
-import type { FabricObject, Point, TPointerEventInfo, TPointerEvent, Rect } from '@fabric'
-import type { FabricObjectProps as FabricObjectPropsOrigin } from 'fabric/src/shapes/Object/types/FabricObjectProps'
-import type { GroupOwnProps } from 'fabric/src/shapes/Group'
-import { LinePoint, Mask } from "./types/elements"
-import { EffectItem } from "./types/common"
+import { FabricObject, Control as FabricControl } from 'fabric';
+import type { FabricObject, Point, TPointerEventInfo, TPointerEvent, Rect } from '@fabric';
+import type { FabricObjectProps as FabricObjectPropsOrigin } from 'fabric/src/shapes/Object/types/FabricObjectProps';
+import type { GroupOwnProps } from 'fabric/src/shapes/Group';
+import { LinePoint, Mask } from './types/elements';
+import { EffectItem } from './types/common';
 
 export declare module 'fabric' {
   export declare type ObjectRef = Pick<
@@ -91,10 +91,13 @@ export declare module 'fabric' {
     | 'textAlign'
     | 'direction'
   > &
-    Pick<Rect, 'rx' | 'ry'>
-  
+    Pick<Rect, 'rx' | 'ry'>;
+
   export declare class Observable<EventSpec> {
-    on(eventName: 'referenceline:moving' | 'referenceline:mouseup', handler: (event: { e: Event; target: ReferenceLine }) => void): T;
+    on(
+      eventName: 'referenceline:moving' | 'referenceline:mouseup',
+      handler: (event: { e: Event; target: ReferenceLine }) => void
+    ): T;
     on(events: { [key: EventName]: (event: { e: Event; target: fabric.GuideLine }) => void }): T;
     // on<K extends keyof EventSpec, E extends EventSpec[K]>(eventName: K, handler: TEventCallback<E>): VoidFunction;
     // on<K extends string, E>(eventName: K, handler: TEventCallback<E>): VoidFunction;
@@ -102,19 +105,17 @@ export declare module 'fabric' {
   }
 
   export declare interface Canvas {
-    __targetlessCanvasDrag?: boolean
-    _objects: FabricObject[]
+    __targetlessCanvasDrag?: boolean;
+    _objects: FabricObject[];
     ref: {
-      zoom: Ref<number>
-      objects: ComputedRef<FabricObject[]>
-    }
-    forEachObject(
-      callback: (object: FabricObject, index: number, array: FabricObject[]) => any,
-    ): void
-    getObjects(...types: string[]): FabricObject[]
-    absolutePan(point: Point, skipSetCoords?: boolean): void
-    relativePan(point: Point, skipSetCoords?: boolean): void
-    zoomToPoint(point: Point, value: number, skipSetCoords?: boolean): void
+      zoom: Ref<number>;
+      objects: ComputedRef<FabricObject[]>;
+    };
+    forEachObject(callback: (object: FabricObject, index: number, array: FabricObject[]) => any): void;
+    getObjects(...types: string[]): FabricObject[];
+    absolutePan(point: Point, skipSetCoords?: boolean): void;
+    relativePan(point: Point, skipSetCoords?: boolean): void;
+    zoomToPoint(point: Point, value: number, skipSetCoords?: boolean): void;
 
     on(eventName: EventName, handler: (e: IEvent<MouseEvent>) => void): void;
     on(options: any): void;
@@ -123,146 +124,138 @@ export declare module 'fabric' {
   }
 
   export declare interface ActiveSelection {
-    multiSelectAdd(...targets: FabricObject[]): void
-    getObjects(...types: string[]): FabricObject[]
-    forEachObject(
-      callback: (object: FabricObject, index: number, array: FabricObject[]) => any,
-    ): void
+    multiSelectAdd(...targets: FabricObject[]): void;
+    getObjects(...types: string[]): FabricObject[];
+    forEachObject(callback: (object: FabricObject, index: number, array: FabricObject[]) => any): void;
   }
 
   export declare interface Group {
-    id: string
-    name: string
-    canvas: Canvas | undefined
-    group: this | undefined
-    isShow: boolean
-    objects: FabricObject[]
-    subTargets: FabricObject[]
-    _objects: FabricObject[]
-    mask?: FabricObject
-    _drawMask(ctx: CanvasRenderingContext2D): void
-    setDirty(): void
-    updateLayout(): void
-    forEachObject(callback: (object: FabricObject, index: number, array: FabricObject[]) => any): void
-    getObjects(): FabricObject[]
-    onActiveTarget(target: FabricObject): void
-    addDeselectedEvent(object: FabricObject): void
-    doubleClickHandler(e: TPointerEventInfo<TPointerEvent>): void
+    id: string;
+    name: string;
+    canvas: Canvas | undefined;
+    group: this | undefined;
+    isShow: boolean;
+    objects: FabricObject[];
+    subTargets: FabricObject[];
+    _objects: FabricObject[];
+    mask?: FabricObject;
+    _drawMask(ctx: CanvasRenderingContext2D): void;
+    setDirty(): void;
+    updateLayout(): void;
+    forEachObject(callback: (object: FabricObject, index: number, array: FabricObject[]) => any): void;
+    getObjects(): FabricObject[];
+    onActiveTarget(target: FabricObject): void;
+    addDeselectedEvent(object: FabricObject): void;
+    doubleClickHandler(e: TPointerEventInfo<TPointerEvent>): void;
   }
 
   export declare interface FabricObject {
-    group: Group | undefined
-    id: string
-    name: string
-    layer?: string
-    effects?: EffectItem[]
-    ref: ObjectRef
-    mask?: FabricObject
-    getParent<T extends boolean = false>(strict?: T): T extends true ? Group | undefined : Group | Canvas | StaticCanvas
-    noEventObjectAdded: boolean /** 不发送 object:added 事件 */
-    getWidthHeight(noFixed?: boolean): Point
-    getHeight(): number
-    getWidth(): number
-    getLeftTop(): Point
-    getLeft(): number
-    getTop(): number
-    setHeight(height: number): void
-    setWidth(width: number): void
-    setAngle(angle: number): void
-    setLeftTop(point: Point): void
-    setLeft(left: number): void
-    setTop(top: number): void
-    toObject(propertiesToInclude?: any[]): any
-    _type: string
-    type: string
-    _stateProperties: any
-    isType<T = boolean>(...types: string[]): this is T
-    hideOnLayer: boolean /** 在图层上隐藏 */
+    group: Group | undefined;
+    id: string;
+    name: string;
+    layer?: string;
+    effects?: EffectItem[];
+    ref: ObjectRef;
+    mask?: FabricObject;
+    getParent<T extends boolean = false>(
+      strict?: T
+    ): T extends true ? Group | undefined : Group | Canvas | StaticCanvas;
+    noEventObjectAdded: boolean /** 不发送 object:added 事件 */;
+    getWidthHeight(noFixed?: boolean): Point;
+    getHeight(): number;
+    getWidth(): number;
+    getLeftTop(): Point;
+    getLeft(): number;
+    getTop(): number;
+    setHeight(height: number): void;
+    setWidth(width: number): void;
+    setAngle(angle: number): void;
+    setLeftTop(point: Point): void;
+    setLeft(left: number): void;
+    setTop(top: number): void;
+    toObject(propertiesToInclude?: any[]): any;
+    _type: string;
+    type: string;
+    _stateProperties: any;
+    isType<T = boolean>(...types: string[]): this is T;
+    hideOnLayer: boolean /** 在图层上隐藏 */;
   }
 
   export declare interface FabricImage {
-    originSrc?: string 
-    effects?: EffectItem[]
-    mask?: SerializedImageProps
-    lastEventTop: number
-    lastEventLeft: number
-    setupDragMatrix(): void
-    renderEffects(type?: string): void
-    bindCropModeHandlers(): void
-    _drawCroppingLines(ctx: CanvasRenderingContext2D): void
-    _drawCroppingPath(ctx: CanvasRenderingContext2D): void
+    originSrc?: string;
+    effects?: EffectItem[];
+    mask?: SerializedImageProps;
+    lastEventTop: number;
+    lastEventLeft: number;
+    setupDragMatrix(): void;
+    renderEffects(type?: string): void;
+    bindCropModeHandlers(): void;
+    _drawCroppingLines(ctx: CanvasRenderingContext2D): void;
+    _drawCroppingPath(ctx: CanvasRenderingContext2D): void;
   }
 
   export declare interface Path {
-    mask?: SerializedImageProps
+    mask?: SerializedImageProps;
   }
 
   export declare interface IText {
-    renderEffects(type?: string): void
+    renderEffects(type?: string): void;
   }
 
   export declare interface Textbox {
-    color: string
+    color: string;
   }
 
-
   export declare interface Polygon {
-    startStyle: LinePoint
-    endStyle: LinePoint
-    pointMoving(index: number, point: Point): Point
+    startStyle: LinePoint;
+    endStyle: LinePoint;
+    pointMoving(index: number, point: Point): Point;
   }
 
   export declare interface Line {
-    setLineMode(value: string, model: 'start' | 'end'): void
+    setLineMode(value: string, model: 'start' | 'end'): void;
   }
 
-  type ExportedKeys =
-    | 'crossOrigin'
-    | 'offsetX'
-    | 'offsetY'
-    | 'patternTransform'
-    | 'repeat'
-    | 'source'
-    | 'fit'
-  export declare type PatternOptions = Partial<Pick<Pattern, ExportedKeys>>
+  type ExportedKeys = 'crossOrigin' | 'offsetX' | 'offsetY' | 'patternTransform' | 'repeat' | 'source' | 'fit';
+  export declare type PatternOptions = Partial<Pick<Pattern, ExportedKeys>>;
 
   export declare interface Pattern {
-    constructor(options?: PatternOptions)
+    constructor(options?: PatternOptions);
     /** 契合度 */
-    fit: 'fill' | 'padding' | 'clip' | 'repeat'
+    fit: 'fill' | 'padding' | 'clip' | 'repeat';
   }
 
   export declare interface StaticCanvas {
-    _objects: FabricObject[]
-    getObjects(): FabricObject[]
+    _objects: FabricObject[];
+    getObjects(): FabricObject[];
   }
 
   export declare interface FabricObjectProps extends FabricObjectPropsOrigin {
-    id: string
-    name: string
+    id: string;
+    name: string;
   }
 
   export declare interface SerializedObjectProps {
-    id: string
-    name: string
-    type: string
+    id: string;
+    name: string;
+    type: string;
   }
 
-  export declare interface GroupProps extends FabricObjectProps, GroupOwnProps { }
+  export declare interface GroupProps extends FabricObjectProps, GroupOwnProps {}
 
-  export declare class Control extends FabricControl {
-    pointIndex?: number
-  }
+  // export declare class Control extends FabricControl {
+  //   pointIndex?: number;
+  // }
 }
 
 export declare namespace fabric {
-  export * from 'fabric'
+  export * from 'fabric';
 }
 
 declare global {
   interface Window {
     queryLocalFonts(): any[];
-    gifler: any
+    gifler: any;
   }
 
   declare type Recordable<T = any> = Record<string, T>;
