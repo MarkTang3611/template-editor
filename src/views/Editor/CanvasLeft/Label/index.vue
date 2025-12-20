@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="left-label">
     <div class="left-top-tabs" id="left-top-tabs">
       <div class="top-tab">
         <el-tooltip placement="top" :hide-after="0" content="首页">
@@ -23,14 +23,14 @@
             <div class="left-name">{{ $t("message.layer") }}</div>
           </div>
         </div> -->
-        <div class="bottom-tab" :class="{ 'left-active': 'help' === poolType }" ref="helpRef" @click="setPoolType('help')">
+        <!-- <div class="bottom-tab" :class="{ 'left-active': 'help' === poolType }" ref="helpRef" @click="setPoolType('help')">
           <div :id="`left-tabs-help`">
             <div><SvgIcon icon-class="help" className="svg-size" /></div>
             <div class="left-name">{{ $t("message.help") }}</div>
           </div>
         </div>
         <HelpPopover :help-ref="helpRef" :help-popover-ref="helpPopoverRef" />
-        <HotkeyDrawer :has-hotkey="hasHotkey" />
+        <HotkeyDrawer :has-hotkey="hasHotkey" /> -->
       </div>
     </div>
   </div>
@@ -60,11 +60,11 @@ interface TabItem {
 
 const topTabs: TabItem[] = [
   { key: "editor", label: "message.edit", icon: `editor`, index: 0 },
-  { key: "template", label: "message.template", icon: `template`, index: 1 },
+  // { key: "template", label: "message.template", icon: `template`, index: 1 },
   { key: "material", label: "message.material", icon: `material`, index: 2 },
-  { key: "text", label: "message.text", icon: "text", index: 3 },
-  { key: "image", label: "message.image", icon: "picture", index: 4 },
-  { key: "toolkit", label: "message.tool", icon: "toolkit", index: 5 },
+  // { key: "text", label: "message.text", icon: "text", index: 3 },
+  // { key: "image", label: "message.image", icon: "picture", index: 4 },
+  // { key: "toolkit", label: "message.tool", icon: "toolkit", index: 5 },
   // { key: "chatgpt", label: "message.chatgpt", icon: "chatgpt", index: 6 },
 ];
 
@@ -111,7 +111,7 @@ const goHome = () => {
 .center-tabs {
   // overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 40px);
   .center-tab:hover {
     background: #f1f1f1;
     border-radius: 5px;

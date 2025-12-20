@@ -1,7 +1,7 @@
 <template>
   <el-config-provider :locale="locale.el">
-    <Computer v-if="!isMobile()" />
-    <Mobile v-else />
+    <Computer />
+    <!-- <Mobile v-else /> -->
   </el-config-provider>
 </template>
 

@@ -1,19 +1,16 @@
 <template>
-  <div>
+  <div class="canvas-right">
     <div class="right-top">
+      <el-button type="primary" @click="exportFile">下载</el-button>
       <div class="flex align-middle px-[8px]">
         <Lang />
-      </div>
-      <div>
-        <el-button text>分享</el-button>
-        <el-button type="primary" @click="exportFile">下载</el-button>
       </div>
     </div>
     <div class="right-bottom">
       <div class="right-tabs">
         <div
           class="tab"
-          :class="[ tab.value === rightState && currentTabs.length > 1 ? 'active' : 'no-active' ]"
+          :class="[tab.value === rightState && currentTabs.length > 1 ? 'active' : 'no-active']"
           v-for="tab in currentTabs"
           :key="tab.value"
           @click="setRightState(tab.value)"
@@ -28,43 +25,43 @@
     <FileExport v-model:visible="exportFileDialog" @close="exportFileHide" @save="exportFileHandle" />
   </div>
 </template>
+
 <script lang="ts" setup>
-import { computed, watch } from "vue";
-import { RightStates, ElementNames } from "@/types/elements";
-import { storeToRefs } from "pinia";
-import { useMainStore } from "@/store/modules/main";
-import Lang from "@/components/Lang/index.vue";
-import CanvasStylePanel from "./CanvasStylePanel/index.vue";
-import ElemnetStylePanel from "./ElementStylePanel/index.vue";
-import EffectStylePanel from "./EffectStylePanel/index.vue";
-import LayerStylePanel from "./LayerStylePanel/index.vue";
-import useI18n from "@/hooks/useI18n";
+import { computed, watch } from 'vue';
+import { RightStates, ElementNames } from '@/types/elements';
+import { storeToRefs } from 'pinia';
+import { useMainStore } from '@/store/modules/main';
+import Lang from '@/components/Lang/index.vue';
+import CanvasStylePanel from './CanvasStylePanel/index.vue';
+import ElemnetStylePanel from './ElementStylePanel/index.vue';
+import EffectStylePanel from './EffectStylePanel/index.vue';
+import LayerStylePanel from './LayerStylePanel/index.vue';
+import useI18n from '@/hooks/useI18n';
 const { t } = useI18n();
 
 const mainStore = useMainStore();
 const { canvasObject, rightState } = storeToRefs(mainStore);
-const exportFileDialog = ref(false)
-
+const exportFileDialog = ref(false);
 
 const exportFileHide = () => {
-  exportFileDialog.value = false
-}
+  exportFileDialog.value = false;
+};
 
 const exportFileHandle = () => {
-  exportFileDialog.value = false
-}
+  exportFileDialog.value = false;
+};
 
 const exportFile = () => {
-  exportFileDialog.value = true
-}
+  exportFileDialog.value = true;
+};
 
 const canvasTabs = [
-  { label: t("style.canvas"), value: RightStates.ELEMENT_CANVAS },
-  { label: t("style.layer"), value: RightStates.ELEMENT_LAYER },
+  { label: t('style.canvas'), value: RightStates.ELEMENT_CANVAS },
+  { label: t('style.layer'), value: RightStates.ELEMENT_LAYER }
 ];
 const styleTabs = [
-  { label: t("style.style"), value: RightStates.ELEMENT_STYLE },
-  { label: t("style.layer"), value: RightStates.ELEMENT_LAYER },
+  { label: t('style.style'), value: RightStates.ELEMENT_STYLE },
+  { label: t('style.layer'), value: RightStates.ELEMENT_LAYER }
 ];
 
 const setRightState = (value: RightStates) => {
@@ -78,9 +75,7 @@ const currentTabs = computed(() => {
 });
 
 watch(currentTabs, () => {
-  const currentTabsValue: RightStates[] = currentTabs.value.map(
-    (tab) => tab.value
-  );
+  const currentTabsValue: RightStates[] = currentTabs.value.map((tab) => tab.value);
   if (!currentTabsValue.includes(rightState.value)) {
     mainStore.setRightState(currentTabsValue[0]);
   }
@@ -91,12 +86,11 @@ const currentPanelComponent = computed(() => {
     [RightStates.ELEMENT_CANVAS]: CanvasStylePanel,
     [RightStates.ELEMENT_STYLE]: ElemnetStylePanel,
     [RightStates.ELEMENT_EFFECT]: EffectStylePanel,
-    [RightStates.ELEMENT_LAYER]: LayerStylePanel,
+    [RightStates.ELEMENT_LAYER]: LayerStylePanel
   };
   return panelMap[rightState.value as RightStates.ELEMENT_STYLE];
 });
 </script>
-
 
 <style lang="scss" scoped>
 .right-top {
@@ -104,6 +98,7 @@ const currentPanelComponent = computed(() => {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   border-bottom: 1px solid $borderColor;
 }
 .right-bottom {

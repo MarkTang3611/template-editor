@@ -16,7 +16,7 @@
   "editor.detectIndentation": false,
   "editor.insertSpaces": true, //是否使用空格
   "editor.tabSize": 2, // 空格或者制表符的大小
-  "editor.fontSize": 14, // 编辑器字体大小
+  "editor.fontSize": 12, // 编辑器字体大小
   "editor.rulers": [
     80,
     100
