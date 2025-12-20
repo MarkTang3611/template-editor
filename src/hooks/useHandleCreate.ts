@@ -6,7 +6,14 @@ import { RightStates, ElementNames } from '@/types/elements';
 import { nanoid } from 'nanoid';
 import { QRCodeElement, QRCodeOption } from '@/types/canvas';
 import { getImageSize } from '@/utils/image';
-import { Object as FabricObject, Path, classRegistry, XY, util, Image as FabricImage } from 'fabric';
+import {
+  Object as FabricObject,
+  Path,
+  classRegistry,
+  XY,
+  util,
+  Image as FabricImage
+} from 'fabric';
 import { Textbox } from '@/extension/object/Textbox';
 import { LinePoint } from '@/types/elements';
 import { Image } from '@/extension/object/Image';
@@ -40,7 +47,8 @@ export default () => {
 
   const renderCanvas = (element: FabricObject) => {
     const [canvas] = useCanvas();
-    canvas.viewportCenterObject(element);
+    // 设置元素集中
+    // canvas.viewportCenterObject(element);
     canvas.add(element);
     canvas.setActiveObject(element);
     rightState.value = RightStates.ELEMENT_STYLE;
@@ -81,6 +89,8 @@ export default () => {
       name: ElementNames.TEXTBOX,
       splitByGrapheme: false,
       width: (fontSize * textValue.length) / 2,
+      elementKeyName: '',
+      isLock: false,
       ...options
     });
     textBoxElement.set({
@@ -121,6 +131,8 @@ export default () => {
       originY: 'center',
       textAlign: 'justify-center',
       name: ElementNames.TEXTBOX,
+      elementKeyName: '',
+      isLock: false,
       splitByGrapheme: textStyle === 'direction' ? true : false
     });
     textBoxElement.set({
@@ -135,7 +147,11 @@ export default () => {
     renderCanvas(textBoxElement);
   };
 
-  const createVerticalTextElement = (fontSize: number, textHollow = false, textValue = '双击修改文字') => {
+  const createVerticalTextElement = (
+    fontSize: number,
+    textHollow = false,
+    textValue = '双击修改文字'
+  ) => {
     const { centerPoint } = useCenter();
     const { canvasX, canvasY } = computedPointByDrag();
     const textBoxElement = new VerticalText(textValue, {
@@ -153,6 +169,8 @@ export default () => {
       lineHeight: 1.3,
       originX: 'center',
       originY: 'center',
+      elementKeyName: '',
+      isLock: false,
       name: ElementNames.VERTICALTEXT
     });
     textBoxElement.set({
@@ -180,6 +198,8 @@ export default () => {
       originX: 'center',
       originY: 'center',
       fill: '#ff5e17',
+      elementKeyName: '',
+      isLock: false,
       name: ElementNames.PATH
     });
     pathElement.left -= pathElement.width / 2;
@@ -218,7 +238,11 @@ export default () => {
 
   const createCurverElement = () => {
     const [canvas] = useCanvas();
-    const line = new Path('M 65 0 Q 100, 100, 200, 0', { fill: '', stroke: 'black', objectCaching: false });
+    const line = new Path('M 65 0 Q 100, 100, 200, 0', {
+      fill: '',
+      stroke: 'black',
+      objectCaching: false
+    });
 
     line.path[0][1] = 100;
     line.path[0][2] = 100;
@@ -271,6 +295,8 @@ export default () => {
       objectCaching: false,
       transparentCorners: false,
       strokeDashArray,
+      elementKeyName: '',
+      isLock: false,
       name: ElementNames.LINE
     });
     renderCanvas(element);
@@ -280,15 +306,16 @@ export default () => {
     const { zoom } = storeToRefs(useFabricStore());
     const { currentTemplateWidth, currentTemplateHeight } = storeToRefs(useTemplatesStore());
     const { centerPoint } = useCenter();
-    const { canvasX, canvasY } = computedPointByDrag();
     const [canvas] = useCanvas();
+    const imgMaxWidth = currentTemplateWidth.value / 2;
+    const imgMaxHeight = currentTemplateHeight.value / 2;
     getImageSize(url).then(async ({ width, height }) => {
       const scale = height / width;
       let imageScale = 1;
-      if (scale < zoom.value && width > currentTemplateWidth.value) {
-        imageScale = currentTemplateWidth.value / width;
-      } else if (height > currentTemplateHeight.value) {
-        imageScale = currentTemplateHeight.value / height;
+      if (scale < zoom.value && width > imgMaxWidth) {
+        imageScale = imgMaxWidth / width;
+      } else if (height > imgMaxHeight) {
+        imageScale = imgMaxHeight / height;
       }
       const imageElement = await Image.fromURL(
         url,
@@ -296,8 +323,8 @@ export default () => {
         {
           id: nanoid(10),
           angle: 0,
-          left: centerPoint.x - (width * imageScale) / 2,
-          top: centerPoint.y - (height * imageScale) / 2,
+          left: centerPoint.x,
+          top: centerPoint.y,
           scaleX: imageScale,
           scaleY: imageScale,
           hasControls: true,
@@ -307,14 +334,24 @@ export default () => {
           originY: 'center',
           borderColor: '#ff8d23',
           name: ElementNames.IMAGE,
-          crossOrigin: 'anonymous'
+          crossOrigin: 'anonymous',
+          elementKeyName: '',
+          isLock: false,
+          // controls: {
+          //   ...FabricObject.ownDefaults.controls,
+          //   lockIcon: createLockIcon()
+          // }
         }
       );
       renderCanvas(imageElement);
     });
   };
 
-  const createQRCodeElement = async (url: string, codeOption: QRCodeOption, codeContent?: string) => {
+  const createQRCodeElement = async (
+    url: string,
+    codeOption: QRCodeOption,
+    codeContent?: string
+  ) => {
     const { centerPoint } = useCenter();
     const { canvasX, canvasY } = computedPointByDrag();
     // const QRCode = classRegistry.getClass('QRCode')
@@ -335,16 +372,22 @@ export default () => {
         borderColor: '#ff8d23',
         codeContent,
         codeOption,
+        elementKeyName: '',
+        isLock: false,
         crossOrigin: 'anonymous'
       }
     )) as QRCodeElement;
-    console.log('codeObject', codeObject);
-    codeObject.left -= codeObject.width / 2;
-    codeObject.top -= codeObject.height / 2;
+    // console.log('codeObject', codeObject);
+    // codeObject.left -= codeObject.width / 2;
+    // codeObject.top -= codeObject.height / 2;
     renderCanvas(codeObject);
   };
 
-  const createBarCodeElement = async (url: string, codeContent: string, codeOption: JsBarcode.BaseOptions) => {
+  const createBarCodeElement = async (
+    url: string,
+    codeContent: string,
+    codeOption: JsBarcode.BaseOptions
+  ) => {
     const { centerPoint } = useCenter();
     const { canvasX, canvasY } = computedPointByDrag();
     // const Barcode = classRegistry.getClass('BarCode')
@@ -365,12 +408,13 @@ export default () => {
         borderColor: '#ff8d23',
         codeContent,
         codeOption,
+        elementKeyName: '',
+        isLock: false,
         crossOrigin: 'anonymous'
       }
     );
-    barcodeObject.left -= barcodeObject.width / 2;
-    barcodeObject.top -= barcodeObject.height / 2;
-
+    // barcodeObject.left -= barcodeObject.width / 2;
+    // barcodeObject.top -= barcodeObject.height / 2;
     renderCanvas(barcodeObject);
   };
 

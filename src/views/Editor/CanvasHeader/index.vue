@@ -2,25 +2,33 @@
   <div>
     <div class="left-handler">
       <el-tooltip placement="top" :hide-after="0">
-        <template #content>{{ t("message.undo") }}</template>
+        <template #content>{{ t('message.ruler') }}</template>
+        <IconRuler class="handler-item" @click="changeRuler()" />
+      </el-tooltip>
+      <el-tooltip placement="top" :hide-after="0">
+        <template #content>{{ t('message.undo') }}</template>
         <IconBack class="handler-item" :class="{ disable: !canUndo }" @click="undo()" />
       </el-tooltip>
       <el-tooltip placement="top" :hide-after="0">
-        <template #content>{{ t("message.redo") }}</template>
+        <template #content>{{ t('message.redo') }}</template>
         <IconNext class="handler-item" :class="{ disable: !canRedo }" @click="redo()" />
       </el-tooltip>
       <el-tooltip placement="top" :hide-after="0">
-        <template #content>{{ t("message.group") }}</template>
-        <IconGroup class="handler-item" :class="{ disable: !canGroup }" @click="group()" v-show="canGroup" />
-      </el-tooltip>
-      <el-tooltip placement="top" :hide-after="0" >
-        <template #content>{{ t("message.ungroup") }}</template>
-        <IconUngroup class="handler-item" :class="{ disable: !canUnGroup }" @click="ungroup()" v-show="canUnGroup" />
+        <template #content> {{ isLock ? t('message.unlock') : t('message.lock') }}</template>
+        <div
+          class="svg-box"
+          :class="{ disable: ['activeselection'].includes(elementType) || elementType === '' }"
+          @click="handleLock"
+        >
+          <SvgIcon v-if="isLock" icon-class="tool-unlock" />
+          <SvgIcon v-else icon-class="tool-lock" />
+        </div>
       </el-tooltip>
       <el-tooltip placement="top" :hide-after="0">
-        <template #content>{{ t("message.ruler") }}</template>
-        <!-- <i class="handler-item iconfont icon-ruler" @click="changeRuler()" /> -->
-        <IconRuler class="handler-item" @click="changeRuler()" />
+        <template #content> {{ t('message.checkAll') }}</template>
+        <div class="svg-box" @click="selectAllElement">
+          <SvgIcon icon-class="tool-check-all" />
+        </div>
       </el-tooltip>
     </div>
 
@@ -28,17 +36,25 @@
       <el-dropdown trigger="click">
         <span class="handler-dropdown">
           <el-tooltip placement="top" :hide-after="0">
-            <template #content>{{ t("message.union") }}</template>
+            <template #content>{{ t('message.union') }}</template>
             <IconUnionSelection class="handler-icon" />
           </el-tooltip>
           <IconDown class="handler-icon icon-down" />
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="intersection(0)"> <IconUnionSelection class="handler-item" />{{ t("message.union") }} </el-dropdown-item>
-            <el-dropdown-item @click="intersection(1)"> <IconSubtractSelectionOne class="handler-item" />{{ t("message.difference") }} </el-dropdown-item>
-            <el-dropdown-item @click="intersection(2)"> <IconIntersectSelection class="handler-item" />{{ t("message.intersection") }} </el-dropdown-item>
-            <el-dropdown-item @click="intersection(3)"> <IconExcludeSelection class="handler-item" />{{ t("message.xor") }} </el-dropdown-item>
+            <el-dropdown-item @click="intersection(0)">
+              <IconUnionSelection class="handler-item" />{{ t('message.union') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click="intersection(1)">
+              <IconSubtractSelectionOne class="handler-item" />{{ t('message.difference') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click="intersection(2)">
+              <IconIntersectSelection class="handler-item" />{{ t('message.intersection') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click="intersection(3)">
+              <IconExcludeSelection class="handler-item" />{{ t('message.xor') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -50,8 +66,17 @@
           <span class="text" ref="scaleRef">{{ canvasZoom }}</span>
         </template>
         <div class="viewport-size-preset">
-          <div class="preset-item" v-for="item in canvasZoomPresets" :key="item" @click="applyCanvasPresetScale(item)">{{ item }}%</div>
-          <div class="preset-item" @click="resetCanvas()"><IconFullScreen class="handler-item"/></div>
+          <div
+            class="preset-item"
+            v-for="item in canvasZoomPresets"
+            :key="item"
+            @click="applyCanvasPresetScale(item)"
+          >
+            {{ item }}%
+          </div>
+          <div class="preset-item" @click="resetCanvas()">
+            <IconFullScreen class="handler-item" />
+          </div>
         </div>
       </el-popover>
       <IconPlus class="handler-item" @click="scaleCanvas('+')" />
@@ -65,18 +90,18 @@
 </template>
 
 <script lang="ts" setup>
-
-import { ref, computed } from "vue";
-import { ElementNames } from "@/types/elements";
-import { storeToRefs } from "pinia";
-import { Object as FabricObject, Group } from "fabric";
-import { useFabricStore, useMainStore, useSnapshotStore, useTemplatesStore } from "@/store";
-import useI18n from "@/hooks/useI18n";
-import useCanvas from "@/views/Canvas/useCanvas";
-import useHandleTool from "@/hooks/useHandleTool";
-import useCanvasScale from "@/hooks/useCanvasScale";
-import useHandleElement from "@/hooks/useHandleElement";
-import useHistorySnapshot from "@/hooks/useHistorySnapshot";
+import { ref, computed } from 'vue';
+import { ElementNames } from '@/types/elements';
+import { storeToRefs } from 'pinia';
+import { Object as FabricObject, Group } from 'fabric';
+import { useFabricStore, useMainStore, useSnapshotStore, useTemplatesStore } from '@/store';
+import useI18n from '@/hooks/useI18n';
+import useCanvas from '@/views/Canvas/useCanvas';
+import useHandleTool from '@/hooks/useHandleTool';
+import useCanvasScale from '@/hooks/useCanvasScale';
+import useHandleElement from '@/hooks/useHandleElement';
+import useHistorySnapshot from '@/hooks/useHistorySnapshot';
+import { FontSize } from '@icon-park/vue-next';
 
 const fabricStore = useFabricStore();
 const mainStore = useMainStore();
@@ -84,12 +109,13 @@ const templatesStore = useTemplatesStore();
 const { t } = useI18n();
 const { alignElement, layerElement } = useHandleTool();
 const { setCanvasScalePercentage, scaleCanvas, resetCanvas } = useCanvasScale();
-const { combineElements, uncombineElements, intersectElements } = useHandleElement();
+const { combineElements, uncombineElements, intersectElements, lockElement, selectAllElement } =
+  useHandleElement();
 const { zoom } = storeToRefs(fabricStore);
 const { canvasObject } = storeToRefs(mainStore);
 
 const scaleRef = ref();
-const canvasZoom = computed(() => Math.round(zoom.value * 100) + "%");
+const canvasZoom = computed(() => Math.round(zoom.value * 100) + '%');
 const canvasZoomPresets = [200, 150, 100, 80, 50];
 
 const { canUndo, canRedo } = storeToRefs(useSnapshotStore());
@@ -97,6 +123,30 @@ const { canUndo, canRedo } = storeToRefs(useSnapshotStore());
 const { redo, undo } = useHistorySnapshot();
 
 const handleElement = computed(() => canvasObject.value as FabricObject);
+
+const elementType = ref('');
+
+watch(
+  handleElement,
+  (val) => {
+    if (typeof val !== 'object' || Object.keys(val).length === 0) {
+      elementType.value = '';
+      return;
+    }
+    elementType.value = val.name || val.type;
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+);
+
+// 元素是否被锁定
+const isLock = computed(() => {
+  return (
+    handleElement.value && handleElement.value.lockMovementX && handleElement.value.lockMovementY
+  );
+});
 
 const canGroup = computed(() => {
   if (!handleElement.value) return false;
@@ -119,7 +169,10 @@ const canIntersection = computed(() => {
   if (handleElement.value.type !== ElementNames.ACTIVE) return false;
 
   const activeObjects = canvas.getActiveObjects();
-  return activeObjects.length === 2 && activeObjects.filter((ele) => ele.type === ElementNames.PATH).length === 2;
+  return (
+    activeObjects.length === 2 &&
+    activeObjects.filter((ele) => ele.type === ElementNames.PATH).length === 2
+  );
 });
 
 // 组合
@@ -136,9 +189,9 @@ const ungroup = () => {
 
 // 标尺显示隐藏
 const changeRuler = () => {
-  const [ canvas ] = useCanvas();
-  if (!canvas.ruler) return
-  canvas.ruler.enabled = !canvas.ruler.enabled
+  const [canvas] = useCanvas();
+  if (!canvas.ruler) return;
+  canvas.ruler.enabled = !canvas.ruler.enabled;
 };
 
 const intersection = (val: number) => {
@@ -148,6 +201,15 @@ const intersection = (val: number) => {
 
 const applyCanvasPresetScale = (value: number) => {
   setCanvasScalePercentage(value);
+};
+
+// 锁定元素
+const handleLock = () => {
+  const [canvas] = useCanvas();
+  const element = canvas.getActiveObject();
+  if (element) {
+    lockElement(element.id, !isLock.value);
+  }
 };
 // const setZoom = ()
 </script>
@@ -185,11 +247,6 @@ const applyCanvasPresetScale = (value: number) => {
   font-size: 14px;
   overflow: hidden;
   cursor: pointer;
-
-  &.disable {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
 }
 .right-handler {
   display: flex;
@@ -224,6 +281,15 @@ const applyCanvasPresetScale = (value: number) => {
       margin-top: 3px;
     }
   }
+}
+.svg-box {
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.disable {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
 

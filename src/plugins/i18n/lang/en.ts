@@ -6,10 +6,13 @@
  * @FilePath: \github\template-editor\src\plugins\i18n\lang\en.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import el_en from 'element-plus/dist/locale/en.mjs'
+import el_en from 'element-plus/dist/locale/en.mjs';
 export default {
   el: el_en.el,
   message: {
+    lock: 'Lock',
+    unlock: 'Unlock',
+    checkAll: 'Check All',
     test: 'test',
     edit: 'Edit',
     template: 'Template',
@@ -107,7 +110,7 @@ export default {
 
     searchTools: 'Search tools',
     barCode: 'Bar code',
-    fabricTable:"Table",
+    fabricTable: 'Table',
     barCodeTips: 'Quickly generate one-dimensional codes, supporting 4 types of coding',
     QRCode: 'QR code',
     QRCodeTips: 'Quickly generate QR codes, supporting 13 styles',
@@ -312,29 +315,29 @@ export default {
     clearFormat: 'Clear Format',
     formatPainter: 'Format Painter',
     increaseIndent: 'Increase Indent',
-    decreaseIndent: 'Decrease Indent',
+    decreaseIndent: 'Decrease Indent'
   },
   waterMark: {
-    text: "Canvas Mark",
-    modalTitle: "WaterMark Setting",
+    text: 'Canvas Mark',
+    modalTitle: 'WaterMark Setting',
     setting: {
-      name: "Name",
-      size: "Size",
-      angle: "Angle",
+      name: 'Name',
+      size: 'Size',
+      angle: 'Angle',
       position: {
-        label: "Position",
-        lt: "Left Top",
-        rt: "Right Top",
-        lb: "Left Bottom",
-        rb: "Right Bottom",
-        full: "Full"
+        label: 'Position',
+        lt: 'Left Top',
+        rt: 'Right Top',
+        lb: 'Left Bottom',
+        rb: 'Right Bottom',
+        full: 'Full'
       }
     }
   },
   gpt: {
     openGPTTitle: 'Open ChatGPT-4',
     openGPTIntro: 'Contact me to Open ChatGPT-4',
-    
+
     gptTitle: 'Experience GPT',
     gptIntro: 'Experience GPT'
   }

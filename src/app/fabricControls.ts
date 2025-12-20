@@ -13,11 +13,13 @@ import {
   Transform,
   TDegree,
   util,
-  TransformActionHandler
+  TransformActionHandler,
+  loadSVGFromURL
 } from 'fabric';
 import { storeToRefs } from 'pinia';
 import { useMainStore } from '@/store';
 import { ArcText } from '@/extension/object/ArcText';
+import { loadSvgToPath2D } from '@/utils/image';
 
 export const changeObjectHeight: TransformActionHandler = (
   eventData: TPointerEvent,
@@ -25,11 +27,20 @@ export const changeObjectHeight: TransformActionHandler = (
   x: number,
   y: number
 ) => {
-  const localPoint = controlsUtils.getLocalPoint(transform, transform.originX, transform.originY, x, y);
+  const localPoint = controlsUtils.getLocalPoint(
+    transform,
+    transform.originX,
+    transform.originY,
+    x,
+    y
+  );
 
   //  make sure the control changes width ONLY from it's side of target
   const { target } = transform;
-  if ((transform.originY === 'top' && localPoint.y > 0) || (transform.originY === 'bottom' && localPoint.y < 0)) {
+  if (
+    (transform.originY === 'top' && localPoint.y > 0) ||
+    (transform.originY === 'bottom' && localPoint.y < 0)
+  ) {
     const strokeWidth = target.strokeWidth ? target.strokeWidth : 0;
     if (!target.scaleY) return false;
     const strokePadding = strokeWidth / (target.strokeUniform ? target.scaleY : 1);
@@ -48,11 +59,20 @@ export const changeObjectCurvature: TransformActionHandler = (
   y: number
 ) => {
   const target = transform.target as ArcText;
-  const localPoint = controlsUtils.getLocalPoint(transform, transform.originX, transform.originY, x, y),
+  const localPoint = controlsUtils.getLocalPoint(
+      transform,
+      transform.originX,
+      transform.originY,
+      x,
+      y
+    ),
     strokePadding = target.strokeWidth / (target.strokeUniform ? target.scaleX : 1),
     multiplier = transform.originY === 'center' ? 2 : 1,
     cy =
-      ((localPoint.y + target.controls[transform.corner].offsetY - target.height / 2 + target._contentOffsetY) *
+      ((localPoint.y +
+        target.controls[transform.corner].offsetY -
+        target.height / 2 +
+        target._contentOffsetY) *
         multiplier) /
         target.scaleY -
       strokePadding;
@@ -101,9 +121,10 @@ const getObjectSizeWithStroke = (object: FabricObject) => {
     strokeWidth = object.strokeWidth;
   const width = object.width,
     height = object.height;
-  const stroke = new Point(object.strokeUniform ? 1 / scaleX : 1, object.strokeUniform ? 1 / scaleY : 1).scalarMultiply(
-    strokeWidth
-  );
+  const stroke = new Point(
+    object.strokeUniform ? 1 / scaleX : 1,
+    object.strokeUniform ? 1 / scaleY : 1
+  ).scalarMultiply(strokeWidth);
   return new Point(width + stroke.x, height + stroke.y);
 };
 
@@ -114,7 +135,10 @@ export const anchorWrapper = (anchorIndex: number, fn: Function) => {
     const fabricObject = transform.target as Polygon;
     const pointX = fabricObject.points[anchorIndex].x,
       pointY = fabricObject.points[anchorIndex].y;
-    const handlePoint = new Point({ x: pointX - fabricObject.pathOffset.x, y: pointY - fabricObject.pathOffset.y });
+    const handlePoint = new Point({
+      x: pointX - fabricObject.pathOffset.x,
+      y: pointY - fabricObject.pathOffset.y
+    });
     const absolutePoint = util.transformPoint(handlePoint, fabricObject.calcTransformMatrix()),
       actionPerformed = fn(eventData, transform, x, y),
       newDim = fabricObject.setDimensions(),
@@ -146,7 +170,12 @@ export const actionHandler = (eventData: TPointerEvent, transform: any, x: numbe
 /**
  * 计算当前控件的位置
  */
-const positionHandler: Control['positionHandler'] = (dim, finalMatrix, fabricObject, currentControl) => {
+const positionHandler: Control['positionHandler'] = (
+  dim,
+  finalMatrix,
+  fabricObject,
+  currentControl
+) => {
   return new Point(
     currentControl.x * dim.x + currentControl.offsetX,
     currentControl.y * dim.y + currentControl.offsetY
@@ -200,7 +229,12 @@ const rotateIcon = (angle: number) => {
 /**
  * 旋转吸附，按住shift键，吸附15度角
  */
-const rotationWithSnapping = (eventData: TPointerEvent, transform: Transform, x: number, y: number) => {
+const rotationWithSnapping = (
+  eventData: TPointerEvent,
+  transform: Transform,
+  x: number,
+  y: number
+) => {
   const { shiftKey } = eventData;
   const { target } = transform;
   const { rotationWithSnapping } = controlsUtils;
@@ -245,7 +279,10 @@ const changeWidth = controlsUtils.wrapWithFireEvent(
   controlsUtils.wrapWithFixedAnchor(controlsUtils.changeWidth)
 );
 
-const changeHeight = controlsUtils.wrapWithFireEvent('scaling', controlsUtils.wrapWithFixedAnchor(changeObjectHeight));
+const changeHeight = controlsUtils.wrapWithFireEvent(
+  'scaling',
+  controlsUtils.wrapWithFixedAnchor(changeObjectHeight)
+);
 
 const changeCurvature = controlsUtils.wrapWithFireEvent(
   'scaling',
@@ -560,14 +597,16 @@ const renderLockIcon = (ctx, left, top, styleOverride, fabricObject) => {
   // 绘制锁头符号
   ctx.fillStyle = 'transparent';
   fabricObject.hoverCursor = '';
+
   if (fabricObject.isLock) {
-    // ctx.fillStyle = primaryColor;
+    ctx.fillStyle = 'rgb(250, 81, 27)';
     fabricObject.hoverCursor = 'not-allowed';
   }
-  ctx.fontSize = FIXED_ICON_SIZE;
 
   const path = new Path2D(LOCK_ICON_SVG);
   ctx.fill(path);
+
+  ctx.fontSize = FIXED_ICON_SIZE;
 
   // 如果使用 SVG 路径，应在这里绘制路径
   // ...

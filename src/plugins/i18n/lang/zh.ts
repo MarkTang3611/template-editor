@@ -13,6 +13,9 @@ export default {
     error: '系统出错',
   },
   message: {
+    lock: '锁定',
+    unlock: '解锁',
+    checkAll: '全选',
     test: '测试',
     edit: '编辑',
     template: '模板',

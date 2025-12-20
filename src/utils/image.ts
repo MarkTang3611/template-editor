@@ -75,9 +75,9 @@ const isUrl = (src: string) => {
 
 const toDataUrl = (url: string): Promise<string | ArrayBuffer | null> => {
   return new Promise(function (resolve) {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.onload = function () {
-      var reader = new FileReader();
+      const reader = new FileReader();
       reader.onloadend = function () {
         resolve(reader.result);
       };
@@ -95,7 +95,7 @@ export const src2blob = async (src: string) => {
     dataURL = await toDataUrl(src) as string
   }
   if (!dataURL) return
-  let arr = dataURL.split(',') as any[]
+  const arr = dataURL.split(',') as any[]
   let mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n);
@@ -111,4 +111,12 @@ export const px2mm = (value: number) => {
 // mm2px
 export const mm2px = (value: number) => {
   return value * 300 / DefaultRatio
+}
+
+export const loadSvgToPath2D = async (url) => {
+  const response = await fetch(url);
+  const text = await response.text();
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(text, "image/svg+xml");
+  return xmlDoc.querySelector('path').getAttribute('d');
 }
