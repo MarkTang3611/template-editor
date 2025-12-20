@@ -30,6 +30,16 @@
           <SvgIcon icon-class="tool-check-all" />
         </div>
       </el-tooltip>
+      <el-tooltip placement="top" :hide-after="0">
+        <template #content> {{ t('style.rotationAngle') }}</template>
+        <div
+          class="svg-box"
+          @click="changeRotate90"
+          :class="{ disable: !handleElement || isLock }"
+        >
+          <SvgIcon icon-class="tool-refresh" />
+        </div>
+      </el-tooltip>
     </div>
 
     <div class="center-handler" v-show="canIntersection">
@@ -211,7 +221,21 @@ const handleLock = () => {
     lockElement(element.id, !isLock.value);
   }
 };
-// const setZoom = ()
+
+// 顺时针旋转90度
+const changeRotate90 = () => {
+  if (isLock.value) {
+    return;
+  }
+  const [canvas] = useCanvas();
+  if (!canvasObject.value || !canvas) return;
+  let _rotate = canvasObject.value.angle;
+  _rotate = _rotate + 90;
+  if (_rotate === 360) {
+    _rotate = 0;
+  }
+  templatesStore.modifedElement(canvasObject.value, { angle: _rotate });
+};
 </script>
 
 <style lang="scss" scoped>

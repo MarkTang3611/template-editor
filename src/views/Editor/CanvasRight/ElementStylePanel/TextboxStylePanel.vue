@@ -372,16 +372,16 @@ const handleElementBlod = () => {
     const elementStyle = handleElement.value.styles
     if (handleElement.value.fontWeight === fontBold) {
       templatesStore.modifedElement(handleElement.value, {fontWeight: fontNormal})
-      for (let i in elementStyle) {
-        for (let j in elementStyle[i]) {
+      for (const i in elementStyle) {
+        for (const j in elementStyle[i]) {
           (elementStyle[i][j] as TextboxElement).set({fontWeight: fontNormal})
         }
       }
     }
     else {
       templatesStore.modifedElement(handleElement.value, {fontWeight: fontBold})
-      for (let i in elementStyle) {
-        for (let j in elementStyle[i]) {
+      for (const i in elementStyle) {
+        for (const j in elementStyle[i]) {
           (elementStyle[i][j] as TextboxElement).set({fontWeight: fontBold})
           // elementStyle[i][j].fontWeight = fontBold
         }

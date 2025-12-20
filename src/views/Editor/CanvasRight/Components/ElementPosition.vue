@@ -138,7 +138,7 @@
         </el-col>
       </el-row>
     </div>
-    <div class="mb-10">
+    <!-- <div class="mb-10">
       <el-row>
         <el-col :span="11" class="position-col">
           <SwipeInput v-bind="angle" content="A" />
@@ -154,7 +154,7 @@
           </div>
         </el-col>
       </el-row>
-    </div>
+    </div> -->
     <div>
       <el-row>
         <el-tooltip placement="top" :hide-after="0" :content="$t('style.top')">

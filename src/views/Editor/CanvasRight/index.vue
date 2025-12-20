@@ -22,7 +22,11 @@
         <component :is="currentPanelComponent"></component>
       </div>
     </div>
-    <FileExport v-model:visible="exportFileDialog" @close="exportFileHide" @save="exportFileHandle" />
+    <FileExport
+      v-model:visible="exportFileDialog"
+      @close="exportFileHide"
+      @save="exportFileHandle"
+    />
   </div>
 </template>
 
@@ -57,7 +61,7 @@ const exportFile = () => {
 
 const canvasTabs = [
   { label: t('style.canvas'), value: RightStates.ELEMENT_CANVAS },
-  { label: t('style.layer'), value: RightStates.ELEMENT_LAYER }
+  // { label: t('style.layer'), value: RightStates.ELEMENT_LAYER }
 ];
 const styleTabs = [
   { label: t('style.style'), value: RightStates.ELEMENT_STYLE },
