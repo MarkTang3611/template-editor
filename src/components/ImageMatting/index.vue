@@ -271,7 +271,7 @@ const download = () => {
   if (!state.resultImage) return;
   downloadLinkFile(
     state.resultImage,
-    `yft-design-${Date.now()}-matting-${state.filename}`
+    `template-editor-${Date.now()}-matting-${state.filename}`
   );
 };
 

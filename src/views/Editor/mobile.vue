@@ -1,5 +1,5 @@
 <template>
-  <div class="yft-design">
+  <div class="template-editor">
     <div class="layout-content">
       <!-- <MobileThumb class="layout-mobile-thumb" />  -->
       <div class="layout-mobile-center">
@@ -25,7 +25,7 @@ import CanvasFooter from './CanvasFooter/index.vue'
 </script>
 
 <style lang="scss" scoped>
-.yft-design {
+.template-editor {
   height: 100%;
 }
 .layout-content {

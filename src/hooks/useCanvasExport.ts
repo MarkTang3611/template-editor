@@ -48,7 +48,7 @@ export default () => {
       top: top * zoom + viewportTransform[5]
     })
     result = changeDpiDataUrl(result, dpi)
-    saveAs(result, `yft-design-${Date.now()}.${format}`)
+    saveAs(result, `template-editor-${Date.now()}.${format}`)
     Exporting.value = false
     ignoreObjects.map(item => item.set({visible: true}))
     canvas.getObjects().filter(obj => obj.id === WorkSpaceClipType).map(item => item.set({visible: showClip.value}))
@@ -96,7 +96,7 @@ export default () => {
     ignoreObjects.map(item => item.set({visible: false}))
     canvas.renderAll()
     const data = getSVGData()
-    downloadSVGFile(data, `yft-design-${Date.now()}.svg`)
+    downloadSVGFile(data, `template-editor-${Date.now()}.svg`)
     ignoreObjects.map(item => item.set({visible: true}))
     canvas.getObjects().filter(obj => obj.id === WorkSpaceClipType).map(item => item.set({visible: showClip.value}))
     canvas.getObjects().filter(obj => obj.id === WorkSpaceSafeType).map(item => item.set({visible: showSafe.value}))
@@ -148,7 +148,7 @@ export default () => {
     }
     const result = await exportFile(content)
     if (result && result.data.link) {
-      downloadLinkFile(result.data.link, `yft-design-${Date.now()}.${filetype}`)
+      downloadLinkFile(result.data.link, `template-editor-${Date.now()}.${filetype}`)
     }
     Exporting.value = false
   }
@@ -157,7 +157,7 @@ export default () => {
   const exportJSON = () => {
     const serializer = getJSONData()
     const blob = new Blob([JSON.stringify(serializer)])
-    saveAs(blob, `yft-design-${Date.now()}.json`)
+    saveAs(blob, `template-editor-${Date.now()}.json`)
   }
 
   return {
