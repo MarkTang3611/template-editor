@@ -80,7 +80,7 @@ export default () => {
       hasControls: true,
       hasBorders: true,
       fontWeight: 'normal',
-      charSpacing: 3,
+      charSpacing: 1,
       opacity: 1,
       lineHeight: 1.3,
       originX: 'center',
@@ -89,6 +89,7 @@ export default () => {
       name: ElementNames.TEXTBOX,
       splitByGrapheme: false,
       width: (fontSize * textValue.length) / 2,
+      backgroundColor: '',
       elementKeyName: '',
       isLock: false,
       ...options

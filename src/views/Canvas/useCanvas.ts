@@ -92,9 +92,15 @@ const setCanvasTransform = () => {
     centerX = workSpaceDraw.left + workSpaceDraw.width / 2;
     centerY = workSpaceDraw.top + workSpaceDraw.height / 2;
   }
-  zoom.value = (Math.min(canvas.getWidth() / boxWidth, canvas.getHeight() / boxHeight) * scalePercentage.value) / 100;
+  zoom.value =
+    (Math.min(canvas.getWidth() / boxWidth, canvas.getHeight() / boxHeight) *
+      scalePercentage.value) /
+    100;
   canvas.setZoom(zoom.value);
-  canvas.absolutePan(new Point(centerX, centerY).scalarMultiply(zoom.value).subtract(canvas.getCenterPoint()), true);
+  canvas.absolutePan(
+    new Point(centerX, centerY).scalarMultiply(zoom.value).subtract(canvas.getCenterPoint()),
+    true
+  );
 };
 
 const initCanvas = () => {
@@ -124,9 +130,12 @@ const initEvent = () => {
   if (!canvas) return;
   const templatesStore = useTemplatesStore();
   const { templateId } = storeToRefs(templatesStore);
+  // 拖拉拽事件
   canvas.on('object:modified', (e: ModifiedEvent) => {
     const { transform, action } = e;
+    console.log('transform', transform);
     const target = canvas?._activeObject?.toObject(propertiesToInclude);
+    console.log('canvas?._activeObject?', canvas?._activeObject);
     const index = canvas?._objects.findIndex((item) => item.id === target.id);
     if (!index) return;
     const data: Snapshot = {
@@ -137,6 +146,7 @@ const initEvent = () => {
       action,
       tid: templateId.value
     };
+    console.log('object:modified：加入快照数据', data);
     const { addHistorySnapshot } = useHistorySnapshot();
     addHistorySnapshot(data);
   });

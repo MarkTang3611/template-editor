@@ -153,13 +153,13 @@
     </el-row>
 
     <el-row class="mt-10">
-      <el-col :span="12">
+      <!-- <el-col :span="12">
         <el-tooltip placement="top" content="转曲" :hide-after="0">
           <el-button class="full-button" @click="handleElementCurve">
             <IconTextStyleOne />
           </el-button>
         </el-tooltip>
-      </el-col>
+      </el-col> -->
       <el-col :span="12">
         <el-tooltip placement="top" content="变形" :hide-after="0">
           <el-button class="full-button" :type="handleElement.type.toLowerCase() === ElementNames.ARCTEXT ? 'primary' : ''" @click="handleElementDeformation">
@@ -210,8 +210,8 @@
       </el-select>
     </div>
 
-    <el-divider style="margin: 12px 0" />
-    <ElementEffects />
+    <!-- <el-divider style="margin: 12px 0" /> -->
+    <!-- <ElementEffects /> -->
     <el-divider style="margin: 12px 0" />
     <ElementStroke :hasStroke="hasStroke" />
     <el-divider style="margin: 12px 0" />

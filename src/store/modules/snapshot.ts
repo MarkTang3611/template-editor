@@ -118,8 +118,8 @@ export const useSnapshotStore = defineStore('snapshot', {
           this.layering = true;
           const obj = {
             ...target,
-            ...transform
-            // ...transform?.original,
+            ...transform,
+            ...transform?.original,
             // originX: target.originX,
             // originY: target.originY
           };
@@ -165,7 +165,7 @@ export const useSnapshotStore = defineStore('snapshot', {
           this.layering = true;
           const obj = {
             ...transform,
-            // ...transform?.original,
+            ...transform?.original,
             ...target
             // originX: target.originX,
             // originY: target.originY
@@ -200,13 +200,6 @@ export const useSnapshotStore = defineStore('snapshot', {
     async addTarget(target: SerializedObjectProps, findIndex: number) {
       const [canvas] = useCanvas();
       const element = await FabricInstance(target);
-      // if (element.lockMovementX && element.lockMovementY) {
-      //   element.hoverCursor = 'not-allowed';
-      //   // _obj.showLockIcon();
-      // } else {
-      //   element.hoverCursor = '';
-      //   // _obj.hideLockIcon();
-      // }
       canvas.insertAt(findIndex, element);
     }
   }
