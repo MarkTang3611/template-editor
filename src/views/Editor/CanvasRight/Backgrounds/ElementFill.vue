@@ -855,12 +855,12 @@ const generateShadingBackgroundRandom = () => {
   @include flex-grid-layout();
 }
 .theme-item {
-  @include flex-grid-layout-children(2, 48%);
-
   padding-bottom: 30%;
   border-radius: $borderRadius;
   position: relative;
   cursor: pointer;
+
+  @include flex-grid-layout-children(2, 48%);
 
   .theme-item-content {
     @include absolute-0();

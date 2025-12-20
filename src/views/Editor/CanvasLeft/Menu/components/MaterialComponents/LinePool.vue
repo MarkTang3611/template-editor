@@ -81,13 +81,13 @@ const selectLine = (line: LinePoolItem) => {
   margin-bottom: 10px;
 }
 .line-item {
-  @include flex-grid-layout-children(5, 19%);
-
   height: 0;
   padding-bottom: 19%;
   flex-shrink: 0;
   position: relative;
   cursor: pointer;
+
+  @include flex-grid-layout-children(5, 19%);
 }
 .line-content {
   @include absolute-0();

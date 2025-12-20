@@ -96,12 +96,13 @@ const selectShape = (shape: PathPoolItem) => {
   margin-bottom: 10px;
 }
 .shape-item {
-  @include flex-grid-layout-children(6, 16%);
   height: 0;
   padding-bottom: 16%;
   flex-shrink: 0;
   position: relative;
   cursor: pointer;
+
+  @include flex-grid-layout-children(6, 16%);
 }
 .shape-content {
   @include absolute-0();

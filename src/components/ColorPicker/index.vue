@@ -386,13 +386,13 @@ const customEyeDropper = () => {
   @include flex-grid-layout();
 }
 .picker-presets-color {
-  @include flex-grid-layout-children(10, 7%);
-
   height: 0;
   padding-bottom: 7%;
   flex-shrink: 0;
   position: relative;
   cursor: pointer;
+
+  @include flex-grid-layout-children(10, 7%);
 
   &.alpha {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADBJREFUOE9jfPbs2X8GPEBSUhKfNAPjqAHDIgz+//+PNx08f/4cfzoYNYCBceiHAQC5flV5JzgrxQAAAABJRU5ErkJggg==);
@@ -405,10 +405,10 @@ const customEyeDropper = () => {
   @include flex-grid-layout();
 }
 .picker-gradient-col {
-  @include flex-grid-layout-children(10, 7%);
-
   display: flex;
   flex-direction: column;
+
+  @include flex-grid-layout-children(10, 7%);
 }
 .picker-gradient-color {
   width: 100%;
