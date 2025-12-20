@@ -13,7 +13,7 @@
       <div class="layout-content-center">
         <CanvasHeader class="center-header relative flex justify-between py-[10px] text-[14px] select-none h-[39px]" />
         <CanvasCenter class="center-body" />
-        <CanvasAffix  class="center-affix"/>
+        <!-- <CanvasAffix  class="center-affix"/> -->
         <!-- <CanvasICP /> -->
       </div>
       <CanvasRight class="layout-content-right h-full w-[260px] bg-[#fff] flex flex-col" />
@@ -24,15 +24,15 @@
 </template>
 
 <script lang="ts" setup>
-import CanvasLeft from "./CanvasLeft/index.vue";
-import CanvasHeader from "./CanvasHeader/index.vue";
-import CanvasCenter from "./CanvasCenter/index.vue";
-import CanvasRight from "./CanvasRight/index.vue";
-import CanvasFooter from "./CanvasFooter/index.vue";
-import CanvasICP from "./CanvasICP/index.vue";
-import CanvasAffix from "./CanvasAffix/index.vue";
-import CanvasDom from "./CanvasDom/index.vue";
-import CanvasTour from "./CanvasTour/index.vue";
+import CanvasLeft from './CanvasLeft/index.vue';
+import CanvasHeader from './CanvasHeader/index.vue';
+import CanvasCenter from './CanvasCenter/index.vue';
+import CanvasRight from './CanvasRight/index.vue';
+import CanvasFooter from './CanvasFooter/index.vue';
+import CanvasICP from './CanvasICP/index.vue';
+import CanvasAffix from './CanvasAffix/index.vue';
+import CanvasDom from './CanvasDom/index.vue';
+import CanvasTour from './CanvasTour/index.vue';
 </script>
 
 <style lang="scss" scoped>
@@ -40,7 +40,7 @@ import CanvasTour from "./CanvasTour/index.vue";
   height: calc(100% - 40px);
 }
 .layout-content-center {
-  width: calc(100% - 120px - 260px);
+  width: calc(100% - 140px - 260px);
 
   .center-body {
     height: 100%;

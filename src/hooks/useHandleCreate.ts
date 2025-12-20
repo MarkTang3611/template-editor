@@ -1,40 +1,46 @@
-import { storeToRefs } from "pinia";
-import { unref } from "vue";
-import { useFabricStore, useTemplatesStore } from "@/store";
-import { useMainStore } from "@/store/modules/main";
-import { RightStates, ElementNames } from "@/types/elements";
-import { nanoid } from "nanoid";
-import { QRCodeElement, QRCodeOption } from "@/types/canvas";
-import { getImageSize } from "@/utils/image";
-import { Object as FabricObject, Path, classRegistry, XY, util, Image as FabricImage } from "fabric";
-import { Textbox } from "@/extension/object/Textbox";
-import { LinePoint } from "@/types/elements";
-import { Image } from "@/extension/object/Image";
-import { QRCode } from "@/extension/object/QRCode";
-import { BarCode } from "@/extension/object/BarCode";
+import { storeToRefs } from 'pinia';
+import { unref } from 'vue';
+import { useFabricStore, useTemplatesStore } from '@/store';
+import { useMainStore } from '@/store/modules/main';
+import { RightStates, ElementNames } from '@/types/elements';
+import { nanoid } from 'nanoid';
+import { QRCodeElement, QRCodeOption } from '@/types/canvas';
+import { getImageSize } from '@/utils/image';
+import { Object as FabricObject, Path, classRegistry, XY, util, Image as FabricImage } from 'fabric';
+import { Textbox } from '@/extension/object/Textbox';
+import { LinePoint } from '@/types/elements';
+import { Image } from '@/extension/object/Image';
+import { QRCode } from '@/extension/object/QRCode';
+import { BarCode } from '@/extension/object/BarCode';
 import { ArcText } from '@/extension/object/ArcText';
 import { Polyline } from '@/extension/object/Polyline';
 import { Circle, makeCurveCircle, makeCurvePoint } from '@/extension/object/Circle';
-import { VerticalText } from '@/extension/object/VerticalText'
-import { Table } from "@/extension/object/Table"
-import JsBarcode from "jsbarcode";
-import { i18nObj } from "@/plugins/i18n/index"
-import useCenter from "@/views/Canvas/useCenter";
-import useCanvas from "@/views/Canvas/useCanvas";
-import useCanvasZindex from "./useCanvasZindex";
-
+import { VerticalText } from '@/extension/object/VerticalText';
+import { Table } from '@/extension/object/Table';
+import JsBarcode from 'jsbarcode';
+import { i18nObj } from '@/plugins/i18n/index';
+import useCenter from '@/views/Canvas/useCenter';
+import useCanvas from '@/views/Canvas/useCanvas';
+import useCanvasZindex from './useCanvasZindex';
 
 export default () => {
-
   const mainStore = useMainStore();
   const templatesStore = useTemplatesStore();
   const { setZindex } = useCanvasZindex();
   const { t } = i18nObj().global;
   const { rightState, systemFonts } = storeToRefs(mainStore);
 
+  let dragX: undefined | number = undefined;
+  let dragY: undefined | number = undefined;
+
+  const setDrag = (x: number, y: number) => {
+    dragX = x;
+    dragY = y;
+  };
+
   const renderCanvas = (element: FabricObject) => {
-    const [ canvas ] = useCanvas();
-	  canvas.viewportCenterObject(element); 
+    const [canvas] = useCanvas();
+    canvas.viewportCenterObject(element);
     canvas.add(element);
     canvas.setActiveObject(element);
     rightState.value = RightStates.ELEMENT_STYLE;
@@ -43,48 +49,66 @@ export default () => {
     templatesStore.addElement(element);
   };
 
-  const createTextElement = (fontSize: number, textStyle = "transverse", textHollow = false, textValue = t("default.textValue")) => {
-    if (textStyle === "direction") {
-      createVerticalTextElement(fontSize, textHollow, textValue)
-      return
+  const createTextElement = (
+    fontSize: number,
+    textStyle = 'transverse',
+    textHollow = false,
+    textValue = t('default.textValue'),
+    options: any = {}
+  ) => {
+    if (textStyle === 'direction') {
+      createVerticalTextElement(fontSize, textHollow, textValue);
+      return;
     }
     const { centerPoint } = useCenter();
+    const { canvasX, canvasY } = computedPointByDrag();
+    debugger;
     const textBoxElement = new Textbox(textValue, {
       id: nanoid(10),
-      left: centerPoint.x,
-      top: centerPoint.y,
+      left: canvasX || centerPoint.x,
+      top: canvasY || centerPoint.y,
       fontSize,
       fontFamily: systemFonts.value[0].value,
       fillType: 0,
       hasControls: true,
       hasBorders: true,
-      fontWeight: "normal",
+      fontWeight: 'normal',
       charSpacing: 3,
       opacity: 1,
       lineHeight: 1.3,
-      originX: "left",
-      originY: "top",
-      textAlign: "justify-center",
+      originX: 'center',
+      originY: 'center',
+      textAlign: 'justify-center',
       name: ElementNames.TEXTBOX,
       splitByGrapheme: false,
-      width: fontSize * textValue.length / 2
+      width: (fontSize * textValue.length) / 2,
+      ...options
     });
-    textBoxElement.set({ left: textBoxElement.left - textBoxElement.width / 2, top: textBoxElement.top - textBoxElement.height / 2, splitByGrapheme: true })
+    textBoxElement.set({
+      left: textBoxElement.left,
+      top: textBoxElement.top,
+      splitByGrapheme: true
+    });
     if (textHollow) {
-      textBoxElement.fill = "";
-      textBoxElement.stroke = "black";
+      textBoxElement.fill = '';
+      textBoxElement.stroke = 'black';
       textBoxElement.strokeWidth = 1;
     }
     renderCanvas(textBoxElement);
   };
 
-  const createArcTextElement = (fontSize: number, textStyle = 'transverse', textHollow = false, textValue = '双击修改文字') => {
-    const { centerPoint } = useCenter()
-
+  const createArcTextElement = (
+    fontSize: number,
+    textStyle = 'transverse',
+    textHollow = false,
+    textValue = '双击修改文字'
+  ) => {
+    const { centerPoint } = useCenter();
+    const { canvasX, canvasY } = computedPointByDrag();
     const textBoxElement = new ArcText(textValue, {
       id: nanoid(10),
-      left: centerPoint.x,
-      top: centerPoint.y,
+      left: canvasX || centerPoint.x,
+      top: canvasY || centerPoint.y,
       fontSize,
       fontFamily: systemFonts.value[0].value,
       fillType: 0,
@@ -94,28 +118,31 @@ export default () => {
       charSpacing: 3,
       opacity: 1,
       lineHeight: 1.3,
-      originX: 'left',
-      originY: 'top',
+      originX: 'center',
+      originY: 'center',
       textAlign: 'justify-center',
       name: ElementNames.TEXTBOX,
-      splitByGrapheme: textStyle === 'direction' ? true : false,
-    })
-    textBoxElement.set({ left: textBoxElement.left - textBoxElement.width / 2, top: textBoxElement.top - textBoxElement.height / 2 })
+      splitByGrapheme: textStyle === 'direction' ? true : false
+    });
+    textBoxElement.set({
+      left: textBoxElement.left,
+      top: textBoxElement.top
+    });
     if (textHollow) {
-      textBoxElement.fill = ''
-      textBoxElement.stroke = 'black'
-      textBoxElement.strokeWidth = 1
+      textBoxElement.fill = '';
+      textBoxElement.stroke = 'black';
+      textBoxElement.strokeWidth = 1;
     }
-    renderCanvas(textBoxElement)
-  }
+    renderCanvas(textBoxElement);
+  };
 
   const createVerticalTextElement = (fontSize: number, textHollow = false, textValue = '双击修改文字') => {
-    const { centerPoint } = useCenter()
-
+    const { centerPoint } = useCenter();
+    const { canvasX, canvasY } = computedPointByDrag();
     const textBoxElement = new VerticalText(textValue, {
       id: nanoid(10),
-      left: centerPoint.x,
-      top: centerPoint.y,
+      left: canvasX || centerPoint.x,
+      top: canvasY || centerPoint.y,
       fontSize,
       fontFamily: systemFonts.value[0].value,
       fillType: 0,
@@ -125,21 +152,25 @@ export default () => {
       charSpacing: 3,
       opacity: 1,
       lineHeight: 1.3,
-      originX: 'left',
-      originY: 'top',
-      name: ElementNames.VERTICALTEXT,
-    })
-    textBoxElement.set({ left: textBoxElement.left - textBoxElement.width / 2, top: textBoxElement.top - textBoxElement.height / 2 })
+      originX: 'center',
+      originY: 'center',
+      name: ElementNames.VERTICALTEXT
+    });
+    textBoxElement.set({
+      left: textBoxElement.left - textBoxElement.width / 2,
+      top: textBoxElement.top - textBoxElement.height / 2
+    });
     if (textHollow) {
-      textBoxElement.fill = "";
-      textBoxElement.stroke = "black";
+      textBoxElement.fill = '';
+      textBoxElement.stroke = 'black';
       textBoxElement.strokeWidth = 1;
     }
-    renderCanvas(textBoxElement)
-  }
+    renderCanvas(textBoxElement);
+  };
 
   const createPathElement = (path: string, left?: number, top?: number) => {
     const { centerPoint } = useCenter();
+    const { canvasX, canvasY } = computedPointByDrag();
     const pathElement = new Path(path, {
       id: nanoid(10),
       left: left ? left : centerPoint.x,
@@ -147,17 +178,22 @@ export default () => {
       hasControls: true,
       hasBorders: true,
       opacity: 1,
-      originX: "left",
-      originY: "top",
-      fill: "#ff5e17",
-      name: ElementNames.PATH,
+      originX: 'center',
+      originY: 'center',
+      fill: '#ff5e17',
+      name: ElementNames.PATH
     });
     pathElement.left -= pathElement.width / 2;
     pathElement.top -= pathElement.height / 2;
     renderCanvas(pathElement);
   };
 
-  const createLineElement = (path: XY[], startStyle: LinePoint, endStyle: LinePoint, strokeDashArray?: [number, number]) => {
+  const createLineElement = (
+    path: XY[],
+    startStyle: LinePoint,
+    endStyle: LinePoint,
+    strokeDashArray?: [number, number]
+  ) => {
     // const { centerPoint } = useCenter()
     // const lineElement = new Line([0, 0, 300, 0], {
     //   id: nanoid(10),
@@ -182,8 +218,8 @@ export default () => {
   };
 
   const createCurverElement = () => {
-    const [ canvas ] = useCanvas();
-    var line = new Path('M 65 0 Q 100, 100, 200, 0', { fill: '', stroke: 'black', objectCaching: false });
+    const [canvas] = useCanvas();
+    const line = new Path('M 65 0 Q 100, 100, 200, 0', { fill: '', stroke: 'black', objectCaching: false });
 
     line.path[0][1] = 100;
     line.path[0][2] = 100;
@@ -193,45 +229,50 @@ export default () => {
 
     line.path[1][3] = 300;
     line.path[1][4] = 100;
-    console.log('path:', line.path)
+    console.log('path:', line.path);
     line.selectable = false;
     canvas.add(line);
 
-    var p1 = makeCurvePoint(200, 200, null, line, null)
-    p1.name = "p1";
+    const p1 = makeCurvePoint(200, 200, null, line, null);
+    p1.name = 'p1';
     canvas.add(p1);
 
-    var p0 = makeCurveCircle(100, 100, line, p1, null);
-    p0.name = "p0";
+    const p0 = makeCurveCircle(100, 100, line, p1, null);
+    p0.name = 'p0';
     canvas.add(p0);
 
-    var p2 = makeCurveCircle(300, 100, null, p1, line);
-    p2.name = "p2";
+    const p2 = makeCurveCircle(300, 100, null, p1, line);
+    p2.name = 'p2';
     canvas.add(p2);
-  }
+  };
 
-  const createPolylineElement = (path: XY[], startStyle: LinePoint, endStyle: LinePoint, strokeDashArray?: [number, number]) => {
+  const createPolylineElement = (
+    path: XY[],
+    startStyle: LinePoint,
+    endStyle: LinePoint,
+    strokeDashArray?: [number, number]
+  ) => {
     const { centerPoint } = useCenter();
     // const points = [ { x: 0, y: 0 }, { x: 200, y: 0 } ]
-
+    const { canvasX, canvasY } = computedPointByDrag();
     const element = new Polyline(path, {
       id: nanoid(10),
-      left: centerPoint.x,
-      top: centerPoint.y,
+      left: canvasX || centerPoint.x,
+      top: canvasY || centerPoint.y,
       strokeWidth: 4,
-      stroke: "pink",
-      fill: "",
+      stroke: 'pink',
+      fill: '',
       scaleX: 1,
       scaleY: 1,
-      originX: "left",
-      originY: "top",
+      originX: 'center',
+      originY: 'center',
       startStyle,
       endStyle,
       hasBorders: false,
       objectCaching: false,
       transparentCorners: false,
       strokeDashArray,
-      name: ElementNames.LINE,
+      name: ElementNames.LINE
     });
     renderCanvas(element);
   };
@@ -240,6 +281,7 @@ export default () => {
     const { zoom } = storeToRefs(useFabricStore());
     const { currentTemplateWidth, currentTemplateHeight } = storeToRefs(useTemplatesStore());
     const { centerPoint } = useCenter();
+    const { canvasX, canvasY } = computedPointByDrag();
     const [canvas] = useCanvas();
     getImageSize(url).then(async ({ width, height }) => {
       const scale = height / width;
@@ -249,46 +291,55 @@ export default () => {
       } else if (height > currentTemplateHeight.value) {
         imageScale = currentTemplateHeight.value / height;
       }
-      const imageElement = await Image.fromURL(url, {}, {
-        id: nanoid(10),
-        angle: 0,
-        left: centerPoint.x - (width * imageScale) / 2,
-        top: centerPoint.y - (height * imageScale) / 2,
-        scaleX: imageScale,
-        scaleY: imageScale,
-        hasControls: true,
-        hasBorders: true,
-        opacity: 1,
-        originX: "left",
-        originY: "top",
-        borderColor: "#ff8d23",
-        name: ElementNames.IMAGE,
-        crossOrigin: "anonymous",
-      });
+      const imageElement = await Image.fromURL(
+        url,
+        {},
+        {
+          id: nanoid(10),
+          angle: 0,
+          left: centerPoint.x - (width * imageScale) / 2,
+          top: centerPoint.y - (height * imageScale) / 2,
+          scaleX: imageScale,
+          scaleY: imageScale,
+          hasControls: true,
+          hasBorders: true,
+          opacity: 1,
+          originX: 'center',
+          originY: 'center',
+          borderColor: '#ff8d23',
+          name: ElementNames.IMAGE,
+          crossOrigin: 'anonymous'
+        }
+      );
       renderCanvas(imageElement);
     });
   };
 
   const createQRCodeElement = async (url: string, codeOption: QRCodeOption, codeContent?: string) => {
     const { centerPoint } = useCenter();
+    const { canvasX, canvasY } = computedPointByDrag();
     // const QRCode = classRegistry.getClass('QRCode')
-    const codeObject = (await QRCode.fromURL(url, {}, {
-      id: nanoid(10),
-      name: ElementNames.QRCODE,
-      angle: 0,
-      left: centerPoint.x,
-      top: centerPoint.y,
-      hasControls: true,
-      hasBorders: true,
-      opacity: 1,
-      originX: "left",
-      originY: "top",
-      borderColor: "#ff8d23",
-      codeContent,
-      codeOption,
-      crossOrigin: "anonymous",
-    })) as QRCodeElement;
-    console.log("codeObject", codeObject);
+    const codeObject = (await QRCode.fromURL(
+      url,
+      {},
+      {
+        id: nanoid(10),
+        name: ElementNames.QRCODE,
+        angle: 0,
+        left: canvasX || centerPoint.x,
+        top: canvasY || centerPoint.y,
+        hasControls: true,
+        hasBorders: true,
+        opacity: 1,
+        originX: 'center',
+        originY: 'center',
+        borderColor: '#ff8d23',
+        codeContent,
+        codeOption,
+        crossOrigin: 'anonymous'
+      }
+    )) as QRCodeElement;
+    console.log('codeObject', codeObject);
     codeObject.left -= codeObject.width / 2;
     codeObject.top -= codeObject.height / 2;
     renderCanvas(codeObject);
@@ -296,23 +347,28 @@ export default () => {
 
   const createBarCodeElement = async (url: string, codeContent: string, codeOption: JsBarcode.BaseOptions) => {
     const { centerPoint } = useCenter();
+    const { canvasX, canvasY } = computedPointByDrag();
     // const Barcode = classRegistry.getClass('BarCode')
-    const barcodeObject = await BarCode.fromURL(url, {}, {
-      id: nanoid(10),
-      name: ElementNames.BARCODE,
-      angle: 0,
-      left: centerPoint.x,
-      top: centerPoint.y,
-      hasControls: true,
-      hasBorders: true,
-      opacity: 1,
-      originX: "left",
-      originY: "top",
-      borderColor: "#ff8d23",
-      codeContent,
-      codeOption,
-      crossOrigin: "anonymous",
-    });
+    const barcodeObject = await BarCode.fromURL(
+      url,
+      {},
+      {
+        id: nanoid(10),
+        name: ElementNames.BARCODE,
+        angle: 0,
+        left: canvasX || centerPoint.x,
+        top: canvasY || centerPoint.y,
+        hasControls: true,
+        hasBorders: true,
+        opacity: 1,
+        originX: 'center',
+        originY: 'center',
+        borderColor: '#ff8d23',
+        codeContent,
+        codeOption,
+        crossOrigin: 'anonymous'
+      }
+    );
     barcodeObject.left -= barcodeObject.width / 2;
     barcodeObject.top -= barcodeObject.height / 2;
 
@@ -321,29 +377,30 @@ export default () => {
 
   const createVideoElement = (url: string) => {
     const { centerPoint } = useCenter();
+    const { canvasX, canvasY } = computedPointByDrag();
     const [canvas] = useCanvas();
-    const videoEl = document.createElement("video");
+    const videoEl = document.createElement('video');
     videoEl.loop = true;
-    videoEl.crossOrigin = "anonymous";
+    videoEl.crossOrigin = 'anonymous';
     videoEl.controls = true;
-    videoEl.style.display = "none";
+    videoEl.style.display = 'none';
 
-    const sourceEl = document.createElement("source");
+    const sourceEl = document.createElement('source');
     sourceEl.src = url;
     videoEl.appendChild(sourceEl);
 
-    videoEl.addEventListener("loadeddata", function () {
+    videoEl.addEventListener('loadeddata', function () {
       videoEl.width = videoEl.videoWidth;
       videoEl.height = videoEl.videoHeight;
       const videoElement = new FabricImage(videoEl, {
         left: centerPoint.x,
         top: centerPoint.y,
-        originX: "center",
-        originY: "center",
-        objectCaching: false,
+        originX: 'center',
+        originY: 'center',
+        objectCaching: false
       });
       canvas.add(videoElement);
-      const viedoSource = videoElement.getElement() as any
+      const viedoSource = videoElement.getElement() as any;
       viedoSource.play();
       util.requestAnimFrame(function render() {
         canvas.renderAll();
@@ -355,14 +412,35 @@ export default () => {
   const createTableElement = () => {
     // const { centerPoint } = useCenter();
     // const [canvas] = useCanvas();
-
     // const table = new Table();
-
     // renderCanvas(table)
+  };
 
-  }
+  // 计算拖拽的位置计算在画布的位置
+  const computedPointByDrag = () => {
+    let canvasX: undefined | number = undefined;
+    let canvasY: undefined | number = undefined;
+    if (dragX === undefined || dragY === undefined) {
+      return { canvasX, canvasY };
+    }
+    const fabricStore = useFabricStore();
+    const { wrapperRef } = storeToRefs(fabricStore);
+    const [canvas] = useCanvas();
+    const canvasRect = wrapperRef.value?.getBoundingClientRect() || { left: 0, top: 0 };
+    const vpt = canvas.viewportTransform;
+    canvasX = (dragX - canvasRect.left - vpt[4]) / vpt[0];
+    canvasY = (dragY - canvasRect.top - vpt[5]) / vpt[3];
+    dragX = undefined;
+    dragY = undefined;
+    return {
+      canvasX,
+      canvasY
+    };
+  };
 
   return {
+    setDrag,
+    computedPointByDrag,
     createTextElement,
     createPathElement,
     createLineElement,

@@ -48,19 +48,19 @@ const getTemplateDetail = async (pk: number) => {
   }
 };
 
-const initRouter = async (templateId?: number) => {
-  if (templateId) {
-    templatesStore.setTemplateId(templateId);
-    const loadingInstance = ElLoading.service({ fullscreen: true, background: 'rgba(122, 122, 122, 0.5)' });
-    await getTemplateDetail(templateId);
-    nextTick(() => loadingInstance.close());
-  }
-};
+// const initRouter = async (templateId?: number) => {
+//   if (templateId) {
+//     templatesStore.setTemplateId(templateId);
+//     const loadingInstance = ElLoading.service({ fullscreen: true, background: 'rgba(122, 122, 122, 0.5)' });
+//     await getTemplateDetail(templateId);
+//     nextTick(() => loadingInstance.close());
+//   }
+// };
 
 onMounted(async () => {
-  const query = router.currentRoute.value.query;
-  initRouter(query.template);
-  initEditor(query.template);
+  // const query = router.currentRoute.value.query;
+  // initRouter(query.template);
+  initEditor();
   document.addEventListener('keydown', keydownListener);
   document.addEventListener('keyup', keyupListener);
   window.addEventListener('blur', keyupListener);
@@ -85,6 +85,7 @@ onUnmounted(() => {
   --offsetY: 0px;
   --size: 8px;
   --color: #dedcdc;
+  // background: #f2f2f2;
   background-image: linear-gradient(45deg, var(--color) 25%, transparent 0, transparent 75%, var(--color) 0),
     linear-gradient(45deg, var(--color) 25%, transparent 0, transparent 75%, var(--color) 0);
   background-position: var(--offsetX) var(--offsetY),

@@ -103,7 +103,9 @@ const initCanvas = () => {
   if (!canvasRef.value) return;
   canvas = new FabricCanvas(canvasRef.value, {
     width: fabricWidth,
-    height: fabricHeight
+    height: fabricHeight,
+    minZoom: 0.25,
+    maxZoom: 5
   });
   // const keybinding = new Keybinding()
   new FabricTool(canvas);

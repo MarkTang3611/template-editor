@@ -26,6 +26,7 @@
     "clipper-lib": "^6.4.2",
     "core-js": "^3.37.1",
     "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.19",
     "delaunator": "^5.0.1",
     "dexie": "^3.2.7",
     "element-plus": "^2.7.6",
