@@ -12,7 +12,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/template-editor",
+    path: "/",
     name: "template-editor",
     component: () => import("@/views/Editor/index.vue"),
     meta: { 
