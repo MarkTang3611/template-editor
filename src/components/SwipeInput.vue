@@ -7,7 +7,7 @@
     :min="min"
     :controls="false"
     :label="label"
-    @change="change"
+    @input="change"
   >
   </el-input-number>
 </template>

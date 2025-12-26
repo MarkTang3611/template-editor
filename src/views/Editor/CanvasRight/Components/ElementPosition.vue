@@ -83,11 +83,11 @@
       </el-row>
     </div>
     <div class="mb-10">
-      <el-row>
+      <el-row :justify="'space-between'">
         <el-col :span="11" class="position-col">
           <SwipeInput v-bind="left" content="X" />
         </el-col>
-        <el-col :span="2" class="fixed-ratio">
+        <!-- <el-col :span="2" class="fixed-ratio">
           <el-tooltip
             effect="dark"
             placement="top"
@@ -104,18 +104,18 @@
           >
             <IconUnlock class="icon-btn" @click="changeFixedRatio(true)" />
           </el-tooltip>
-        </el-col>
+        </el-col> -->
         <el-col :span="11" class="position-col">
           <SwipeInput v-bind="top" content="Y" />
         </el-col>
       </el-row>
     </div>
     <div class="mb-10">
-      <el-row>
+      <el-row :justify="'space-between'">
         <el-col :span="11" class="position-col">
           <SwipeInput v-bind="width" content="W" />
         </el-col>
-        <el-col :span="2" class="fixed-ratio">
+        <!-- <el-col :span="2" class="fixed-ratio">
           <el-tooltip
             effect="dark"
             placement="top"
@@ -132,7 +132,7 @@
           >
             <IconUnlock class="icon-btn" @click="changeFixedRatio(true)" />
           </el-tooltip>
-        </el-col>
+        </el-col> -->
         <el-col :span="11" class="position-col">
           <SwipeInput v-bind="height" content="H" />
         </el-col>
